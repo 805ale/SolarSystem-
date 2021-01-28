@@ -1,0 +1,20 @@
+#info {
+	position: absolute;
+	top: 50%;
+	left: 70%;
+	width: 20%;
+	text-align: center;
+	z-index: 100;
+	display:block;
+	color: white;
+
+	border: 1px solid grey;
+	visibility: hidden;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#title
+{
+	text-align: center;
+	font-weight: bold;
+}

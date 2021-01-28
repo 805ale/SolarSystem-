@@ -1,0 +1,15 @@
+{
+  "planets":[
+  {"name":"Sun",
+    "desc":"The Sun. Center of the Solar System."},
+  {"name":"Mercury","desc":"The smallest planet in the solar system."},
+  {"name":"Venus","desc":"Air pressure 90 times heavier than Earth."},
+  {"name":"Earth","desc":"Our Home."},
+  {"name":"Mars","desc":"The tallest place in the solar system is Mount Olympus on Mars."},
+  {"name":"Jupiter","desc":"Cold, and constantly stormy! One has been raging for hundreds of years."},
+  {"name":"Saturn","desc":"A gas giant, it's rings are made of rock and ice!"},
+  {"name":"Uranus","desc":"Uranus rotates on it's side!"},
+  {"name":"Neptune","desc":"The only planet not visible in the night sky."}
+
+  ]
+}
