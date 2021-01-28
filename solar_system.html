@@ -11,9 +11,18 @@
 
     <body>
         <script src="https://itp.nyu.edu/kinectron/kinectron.bundle.js"></script>
-        <script src="https://threejs.org/build/three.js"></script>
+        <script src="three.js/build/three.min.js"></script>
         <script src="OrbitControls.js"></script>
-        <script src=“js/OBJLoader.js"></script>
-        <script src="solar_system.js"></script>
+        
+        <script type="module" src="solar_system.js"></script>
+
+
+
+        <script src="three.js/examples/js/postprocessing/EffectComposer.js"></script>
+		<script src="three.js/examples/js/shaders/CopyShader.js"></script>
+		<script src="three.js/examples/js/postprocessing/ShaderPass.js"></script>
+		<script src="three.js/examples/js/postprocessing/UnrealBloomPass.js"></script>
+		<script src="three.js/examples/js/postprocessing/RenderPass.js"></script>
+		<script src="three.js/examples/js/shaders/LuminosityHighPassShader.js"></script>
     </body>
 </html>

@@ -1,9 +1,20 @@
-//Initialize a Kinectron instance
+import {GUI} from '/three.js/examples/jsm/libs/dat.gui.module.js'; //w18001162-Darius Blaga
+
+//w18001162-Darius Blaga -------------------------------------------
+var params = {
+    exposure: 0.3,
+    bloomStrength: 0.6,
+    bloomThreshold: 0,
+    bloomRadius: 1.6
+};
+//------------------------------------------------------------------
+
+//Initialize a Kinectron instance  w18001218-Alexandra Vaida
 console.log("Initialize a Kinectron instance");
 var kinectron = new Kinectron();
 console.log("Done");
 
-//Define a function to load local file
+//Define a function to load local file w18001218-Alexandra Vaida
 console.log("Define a function to load local file");
 function readTextFile(file, callback) 
 {
@@ -21,14 +32,14 @@ function readTextFile(file, callback)
 }
 console.log("Done");
 
-//Load motion JSON file
+//Load motion JSON file w18001218-Alexandra Vaida
 console.log("Load motion JSON file");
 
-// JSON variables
+// JSON variables w18001218-Alexandra Vaida
 var numJsonFrames = 0;
 var jsonMotion = null;
 
-// Read the JSON file motion.json
+// Read the JSON file motion.json w18001218-Alexandra Vaida
 readTextFile("motion.json", function(text)
 {
    jsonMotion = JSON.parse(text);
@@ -39,12 +50,12 @@ readTextFile("motion.json", function(text)
 console.log("Done");
 
 
-//Create the scene
+//Create the scene w18001218-Alexandra Vaida
 console.log("Create the scene");
 var scene = new THREE.Scene();
 console.log("Done");
 
-//Create the camera
+//Create the camera w18001218-Alexandra Vaida
 console.log("Create the camera");
 var camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.x = -1;
@@ -52,34 +63,68 @@ camera.position.z = 4;
 camera.position.y = 2;
 console.log("Done");
 
-//Create the renderer
+//Create the renderer w18001218-Alexandra Vaida
 console.log("Create the renderer");
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 console.log("Done");
 
-//Create the camera controller
+// w18001162-Darius Blaga 
+//GUI w18001162-Darius Blaga 
+
+var gui = new GUI();
+                gui.add( params, 'exposure' ).name( 'Bloom Exposure' ).listen();
+                gui.add (params, 'bloomStrength').name('Bloom Strength').listen();
+                gui.add (params, 'bloomThreshold').name('Bloom Threshold').listen();
+                gui.add (params, 'bloomRadius').name('Bloom Radius').listen();
+				
+                
+
+//Passes w18001162-Darius Blaga 
+
+//Effect composer w18001162-Darius Blaga 
+const composer = new THREE.EffectComposer( renderer );
+
+//Render pass w18001162-Darius Blaga 
+const renderPass = new THREE.RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+//Copy pass w18001162-Darius Blaga 
+var copyPass = new THREE.ShaderPass( THREE.CopyShader );
+copyPass.renderToScreen = true;
+composer.addPass(copyPass);
+
+//Bloom effect w18001162-Darius Blaga 
+const bloomPass = new THREE.UnrealBloomPass(scene, camera);
+bloomPass.threshold = params.bloomThreshold;
+bloomPass.strength = params.bloomStrength;
+bloomPass.radius = params.bloomRadius;
+composer.addPass(bloomPass);
+
+
+
+//Create the camera controller w18001218-Alexandra Vaida
 console.log("Create the camera controller");
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 0, 0);
 controls.update();
 console.log("Done");
 
-//Add ambient light
+//Add ambient light w18001218-Alexandra Vaida
 console.log("Add the ambient light");
 var lightAmbient = new THREE.AmbientLight(0x888888); 
 scene.add(lightAmbient);
 console.log("Done");
 
-//Create point light (Sun)
+//Create point light (Sun) w18001218-Alexandra Vaida
 var light = new THREE.PointLight(0xffffff);
 light.position.set(0, 0, 0);
 light.intensity = 0.8;
 light.castShadow = true;
 scene.add(light);
 
-//Create the stars
+//Create the stars w18001218-Alexandra Vaida
 console.log("Create the stars");
 var stars_geom = new THREE.Geometry();
 var stars_mat = new THREE.ParticleBasicMaterial( { color: 0xe6e6fa, 
@@ -87,7 +132,7 @@ var stars_mat = new THREE.ParticleBasicMaterial( { color: 0xe6e6fa,
                                                    sizeAttenuation: false } );
 var stars;
 
-//creating random points uniformly distributed
+//creating random points uniformly distributed w18001218-Alexandra Vaida
 for (var i=0; i<5000;i++) {
     var vertex = new THREE.Vector3();
     vertex.x = Math.random()*2-1;
@@ -106,7 +151,7 @@ var stars_mat2 = new THREE.ParticleBasicMaterial( { color: 0xbbbbbb, opacity:0.6
                                                         sizeAttenuation: false } );
 var stars2;
 
-//creating random points uniformly distributed
+//creating random points uniformly distributed w18001218-Alexandra Vaida
 for (var i=0; i<1000;i++) {
     var vertex = new THREE.Vector3();
     vertex.x = Math.random()*2-1;
@@ -122,7 +167,13 @@ scene.add(stars2);
 
 console.log("Done");
 
-//Create the Sun
+//Create the geometry of the big Sun w18001162 - Darius Blaga
+const geometry = new THREE.SphereGeometry(2,32,32);
+const material = new THREE.MeshBasicMaterial( { color: 0xffa500} );
+const bigSun = new THREE.Mesh( geometry, material );
+scene.add( bigSun );
+
+//Create the Sun w18001218-Alexandra Vaida
 console.log("Create the Sun");
 var sun = null;
 var sun_mat = null;
@@ -132,14 +183,16 @@ loader.load(
     'textures/Sun.jpg',
     function ( texture ) {
         var sun_mat = new THREE.MeshPhongMaterial(
-             { map: texture, 
+             { 
+                 color:0xffa500,
+                 map: texture, 
                bumpMap: new THREE.TextureLoader().load('textures/Sun_bump.jpg'),
                emissive: 0xffa500,
                emissiveIntensity: 0.3
         } );
         sun_mat.bumpScale = 0.05;
             
-        sun = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 16), sun_mat);
+        sun = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), sun_mat);
         sun.position.set(0,0,0);
         scene.add(sun);
     },
@@ -152,7 +205,7 @@ loader.load(
 );
 console.log("Done");
 
-//Create Mercury
+//Create Mercury w18001218-Alexandra Vaida
 console.log("Create Mercury");
 var mercury = null;
 var mercury_geom = new THREE.SphereGeometry(0.2,32,16);
@@ -180,7 +233,7 @@ loader.load(
 );
 console.log("Done");
 
-//Create Venus
+//Create Venus w18001218-Alexandra Vaida
 console.log("Create Venus");
 var venus = null;
 var venus_geom = new THREE.SphereGeometry(0.3,32,16);
@@ -209,7 +262,7 @@ loader.load(
 console.log("Done");
 
 
-//Create the Earth
+//Create the Earth w18001218-Alexandra Vaida
 console.log("Create the Earth");
 var earth = null;
 var earth_geom = new THREE.SphereGeometry(0.3,32,16);
@@ -237,7 +290,7 @@ loader.load(
 );
 console.log("Done");
 
-//Create Mars
+//Create Mars w18001218-Alexandra Vaida
 console.log("Create Mars");
 var mars = null;
 var mars_geom = new THREE.SphereGeometry(0.2,32,16);
@@ -265,7 +318,7 @@ loader.load(
 );
 console.log("Done");
 
-//Create Jupiter
+//Create Jupiter w18001218-Alexandra Vaida
 console.log("Create Jupiter");
 var jupiter = null;
 var jupiter_geom = new THREE.SphereGeometry(0.4,32,16);
@@ -293,7 +346,7 @@ loader.load(
 );
 console.log("Done");
 
-//Create Saturn
+//Create Saturn w18001218-Alexandra Vaida
 console.log("Create Saturn");
 var saturn = null;
 var saturn_geom = new THREE.SphereGeometry(0.35,32,16);
@@ -321,7 +374,7 @@ loader.load(
 );
 console.log("Done");
 
-//Create Uranus
+//Create Uranus w18001218-Alexandra Vaida
 console.log("Create Uranus");
 var uranus = null;
 var uranus_geom = new THREE.SphereGeometry(0.3,32,16);
@@ -349,7 +402,7 @@ loader.load(
 );
 console.log("Done");
 
-//Create Neptune
+//Create Neptune w18001218-Alexandra Vaida
 console.log("Create Neptune");
 var neptune = null;
 var neptune_geom = new THREE.SphereGeometry(0.2,32,16);
@@ -378,7 +431,7 @@ loader.load(
 console.log("Done");
 
 
-//Create a function to update meshes using motion
+//Create a function to update meshes using motion w18001218-Alexandra Vaida
 console.log("Create a function to update meshes using motion");
 function getBodies(skeletonFrame)
 {
@@ -391,7 +444,7 @@ function getBodies(skeletonFrame)
 }
 console.log("Done");
 
-//Create the animation function
+//Create the animation function w18001218-Alexandra Vaida
 console.log("Create the animation function");
 var iFrame = 0;
 var t=0;
@@ -451,7 +504,10 @@ function animate()
     //make the planets rotate around the sun (180 degrees)
     t+=Math.PI/180*2;
 
-   	renderer.render(scene, camera);
+
+
+       composer.render(scene, camera); // w18001162-Darius Blaga
+
 }
 animate();
 console.log("Done");
